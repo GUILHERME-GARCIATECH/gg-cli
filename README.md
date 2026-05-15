@@ -63,21 +63,6 @@ npm install commander @inquirer/prompts chalk
 
 ---
 
-## Por que JavaScript primeiro?
-
-TypeScript pode ser usado no futuro, mas a primeira versão será em JavaScript puro.
-
-Motivos:
-
-- reduzir complexidade inicial;
-- evitar configuração de build;
-- focar no funcionamento real da CLI;
-- aprender melhor Node.js;
-- facilitar testes rápidos;
-- evoluir o projeto por etapas.
-
----
-
 ## Funcionalidades principais
 
 ## 1. Gerenciamento de repositórios
