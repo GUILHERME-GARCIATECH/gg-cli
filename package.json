@@ -22,7 +22,7 @@
   "author": "GUILHERME-GARCIATECH",
   "type": "module",
   "bin": {
-    "gg": ".src/index.js"
+    "gg": "./src/index.js"
   },
   "main": "index.js",
   "scripts": {
