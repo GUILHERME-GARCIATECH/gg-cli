@@ -1,0 +1,37 @@
+{
+  "name": "gg-cli",
+  "version": "0.1.0",
+  "description": "personal-CLI, study and local automation",
+  "keywords": [
+    "cli",
+    "git",
+    "repository-manager",
+    "devtools",
+    "automation",
+    "personal"
+  ],
+  "homepage": "https://github.com/GUILHERME-GARCIATECH/gg-cli#readme",
+  "bugs": {
+    "url": "https://github.com/GUILHERME-GARCIATECH/gg-cli/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GUILHERME-GARCIATECH/gg-cli.git"
+  },
+  "license": "ISC",
+  "author": "GUILHERME-GARCIATECH",
+  "type": "module",
+  "bin": {
+    "gg": ".src/index.js"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^8.4.3",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3"
+  }
+}
