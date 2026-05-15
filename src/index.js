@@ -2,6 +2,7 @@
 
 import { Command } from "commander";
 import { openMainMenu } from "./menu.js";
+import { registerRepoCommands } from "./commands/repo.js";
 
 const program = new Command();
 
@@ -23,6 +24,8 @@ program
     .action(async () => {
         await openMainMenu();
     });
+
+registerRepoCommands(program);
 
 if (process.argv.length <= 2) {
     await openMainMenu();

@@ -1,13 +1,18 @@
-{
-    "defaultWorkspace": "C:\\gg-workspace",
-    "facultyWorkspace": "C:\\gg-faculdade",
-    "defaultGitUser": {
-        "name": "Guilherme Garcia",
-        "email": "guilherme.garciatech@gmail.com"
+[
+    {
+        "name": "dev-study-roadmap",
+        "description": "Roadmap pessoal de estudos em desenvolvimento",
+        "url": "https://github.com/GUILHERME-GARCIATECH/dev-study-roadmap.git",
+        "type": "study",
+        "defaultEditor": "vscode",
+        "workspace": "faculdade"
     },
-    "editors": {
-        "vscode": "code",
-        "intellij": "idea"
-    },
-    "safeClean": true
-}
+    {
+        "name": "obi-java",
+        "description": "Estudos para OBI usando Java",
+        "url": "https://github.com/GUILHERME-GARCIATECH/obi-java.git",
+        "type": "java",
+        "defaultEditor": "intellij",
+        "workspace": "faculdade"
+    }
+]
