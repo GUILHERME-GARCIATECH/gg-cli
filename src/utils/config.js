@@ -1,10 +1,21 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const ROOT_DIR = process.cwd();
+const CURRENT_FILE = fileURLToPath(import.meta.url);
+const CURRENT_DIR = path.dirname(CURRENT_FILE);
+const PROJECT_ROOT = path.resolve(CURRENT_DIR, "../..");
+
+export function getProjectRoot() {
+  return PROJECT_ROOT;
+}
+
+export function resolveProjectPath(relativePath) {
+  return path.resolve(PROJECT_ROOT, relativePath);
+}
 
 export function readJsonFile(relativePath, fallback = null) {
-  const filePath = path.join(ROOT_DIR, relativePath);
+  const filePath = resolveProjectPath(relativePath);
 
   if (!fs.existsSync(filePath)) {
     return fallback;
@@ -20,7 +31,7 @@ export function readJsonFile(relativePath, fallback = null) {
 }
 
 export function writeJsonFile(relativePath, data) {
-  const filePath = path.join(ROOT_DIR, relativePath);
+  const filePath = resolveProjectPath(relativePath);
   const dirPath = path.dirname(filePath);
 
   if (!fs.existsSync(dirPath)) {

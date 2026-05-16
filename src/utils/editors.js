@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { runCommandDetached } from "./shell.js";
+import { readSettings } from "./config.js";
 
 function startWindowsProgram(command, args = []) {
   const child = spawn("cmd.exe", ["/c", "start", "", command, ...args], {
@@ -18,8 +18,13 @@ function startWindowsProgram(command, args = []) {
   return child;
 }
 
+function getEditorCommand(editorName, fallback) {
+  const settings = readSettings();
+  return settings.editors?.[editorName] || fallback;
+}
+
 export function openInVSCode(repoPath) {
-  startWindowsProgram("code", [repoPath]);
+  startWindowsProgram(getEditorCommand("vscode", "code"), [repoPath]);
 }
 
 export function openInExplorer(repoPath) {
@@ -31,7 +36,7 @@ export function openInTerminal(repoPath) {
 }
 
 export function openInIntelliJ(repoPath) {
-  startWindowsProgram("idea", [repoPath]);
+  startWindowsProgram(getEditorCommand("intellij", "idea"), [repoPath]);
 }
 
 export function openRepoWithEditor(repo, repoPath, editorOption) {
