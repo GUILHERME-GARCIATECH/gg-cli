@@ -1,18 +1,18 @@
 [
-    {
-        "name": "dev-study-roadmap",
-        "description": "Roadmap pessoal de estudos em desenvolvimento",
-        "url": "https://github.com/GUILHERME-GARCIATECH/dev-study-roadmap.git",
-        "type": "study",
-        "defaultEditor": "vscode",
-        "workspace": "faculdade"
-    },
-    {
-        "name": "obi-java",
-        "description": "Estudos para OBI usando Java",
-        "url": "https://github.com/GUILHERME-GARCIATECH/obi-java.git",
-        "type": "java",
-        "defaultEditor": "intellij",
-        "workspace": "faculdade"
-    }
+  {
+    "name": "dev-study-roadmap",
+    "description": "Roadmap pessoal de estudos em desenvolvimento",
+    "url": "https://github.com/GUILHERME-GARCIATECH/dev-study-roadmap.git",
+    "type": "study",
+    "defaultEditor": "vscode",
+    "workspace": "faculdade"
+  },
+  {
+    "name": "obi-study-roadmap",
+    "description": "Estudos para OBI usando Java",
+    "url": "https://github.com/GUILHERME-GARCIATECH/obi-study-roadmap.git",
+    "type": "java",
+    "defaultEditor": "intellij",
+    "workspace": "faculdade"
+  }
 ]
