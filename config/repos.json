@@ -14,5 +14,37 @@
     "type": "java",
     "defaultEditor": "intellij",
     "workspace": "faculdade"
+  },
+  {
+    "name": "licita-assessoria",
+    "description": "App de gestão de licitação web",
+    "url": "https://github.com/DEV-ASSESSORIA-TECH/licita-assessoria.git",
+    "type": "node",
+    "defaultEditor": "vscode",
+    "workspace": "default"
+  },
+  {
+    "name": "erp-assessoria",
+    "description": "Sistema erp da Assessoria ",
+    "url": "https://github.com/DEV-ASSESSORIA-TECH/erp-assessoria.git",
+    "type": "node",
+    "defaultEditor": "vscode",
+    "workspace": "default"
+  },
+  {
+    "name": "gg-cli",
+    "description": "Cli para gestão pessoal",
+    "url": "https://github.com/GUILHERME-GARCIATECH/gg-cli.git",
+    "type": "node",
+    "defaultEditor": "vscode",
+    "workspace": "default"
+  },
+  {
+    "name": "minelandia",
+    "description": "Site da Minelandia",
+    "url": "https://github.com/GUILHERME-GARCIATECH/minelandia.git",
+    "type": "node",
+    "defaultEditor": "vscode",
+    "workspace": "default"
   }
 ]
