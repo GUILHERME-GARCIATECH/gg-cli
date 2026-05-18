@@ -1,0 +1,13 @@
+{
+    "defaultWorkspace": "C:\\gg-workspace",
+    "facultyWorkspace": "C:\\gg-faculdade",
+    "defaultGitUser": {
+        "name": "Guilherme Garcia",
+        "email": "guilherme.garciatech@gmail.com"
+    },
+    "editors": {
+        "vscode": "code",
+        "intellij": "idea"
+    },
+    "safeClean": true
+}
