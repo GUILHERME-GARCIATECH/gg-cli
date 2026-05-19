@@ -12,15 +12,15 @@ test("traduz alias compacto com hifen para repo list", () => {
 
 test("traduz alias compacto sem hifen para repo open", () => {
   assert.deepEqual(
-    translate(["ro", "dev-study-roadmap", "--c"]),
-    ["repo", "open", "dev-study-roadmap", "--code"]
+    translate(["ro", "hello-world", "--c"]),
+    ["repo", "open", "hello-world", "--code"]
   );
 });
 
 test("traduz alias compacto com hifen e opcao curta longa", () => {
   assert.deepEqual(
-    translate(["-ro", "dev-study-roadmap", "--c"]),
-    ["repo", "open", "dev-study-roadmap", "--code"]
+    translate(["-ro", "hello-world", "--c"]),
+    ["repo", "open", "hello-world", "--code"]
   );
 });
 

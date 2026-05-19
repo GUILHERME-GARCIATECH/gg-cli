@@ -22,12 +22,16 @@
   "author": "GUILHERME-GARCIATECH",
   "type": "module",
   "bin": {
-    "gg": "./src/index.js"
+    "gg": "./src/index.js",
+    "gg-install": "./scripts/install-gg.cmd"
   },
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "node --test"
+    "test": "node --test",
+    "build:exe": "npx --yes pkg src/index.js --targets node18-win-x64 --output dist/gg.exe",
+    "build:installer": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-installer.ps1",
+    "install:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-windows.ps1"
   },
   "dependencies": {
     "@inquirer/prompts": "^8.4.3",

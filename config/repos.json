@@ -1,64 +1,24 @@
 [
   {
-    "name": "dev-study-roadmap",
-    "description": "Roadmap pessoal de estudos em desenvolvimento",
-    "url": "https://github.com/GUILHERME-GARCIATECH/dev-study-roadmap.git",
+    "name": "git",
+    "description": "Repositorio oficial do Git",
+    "url": "https://github.com/git/git.git",
+    "type": "other",
+    "defaultEditor": "vscode",
+    "workspace": "default"
+  },
+  {
+    "name": "hello-world",
+    "description": "Repositorio publico de exemplo do Octocat",
+    "url": "https://github.com/octocat/Hello-World.git",
     "type": "study",
     "defaultEditor": "vscode",
-    "workspace": "faculdade"
-  },
-  {
-    "name": "obi-study-roadmap",
-    "description": "Estudos para OBI usando Java",
-    "url": "https://github.com/GUILHERME-GARCIATECH/obi-study-roadmap.git",
-    "type": "java",
-    "defaultEditor": "intellij",
-    "workspace": "faculdade"
-  },
-  {
-    "name": "licita-assessoria",
-    "description": "App de gestão de licitação web",
-    "url": "https://github.com/DEV-ASSESSORIA-TECH/licita-assessoria.git",
-    "type": "node",
-    "defaultEditor": "vscode",
     "workspace": "default"
   },
   {
-    "name": "erp-assessoria",
-    "description": "Sistema erp da Assessoria ",
-    "url": "https://github.com/DEV-ASSESSORIA-TECH/erp-assessoria.git",
-    "type": "node",
-    "defaultEditor": "vscode",
-    "workspace": "default"
-  },
-  {
-    "name": "gg-cli",
-    "description": "Cli para gestão pessoal",
-    "url": "https://github.com/GUILHERME-GARCIATECH/gg-cli.git",
-    "type": "node",
-    "defaultEditor": "vscode",
-    "workspace": "default"
-  },
-  {
-    "name": "minelandia",
-    "description": "Site da Minelandia",
-    "url": "https://github.com/GUILHERME-GARCIATECH/minelandia.git",
-    "type": "node",
-    "defaultEditor": "vscode",
-    "workspace": "default"
-  },
-  {
-    "name": "script-youtube",
-    "description": "Script para baixar playlist no youtube",
-    "url": "https://github.com/GUILHERME-GARCIATECH/script-youtube-playlist.git",
-    "type": "automation",
-    "defaultEditor": "vscode",
-    "workspace": "default"
-  },
-  {
-    "name": "ass-cli",
-    "description": "CLI da Assessoria Tech",
-    "url": "https://github.com/DEV-ASSESSORIA-TECH/ass-cli.git",
+    "name": "vscode",
+    "description": "Editor Visual Studio Code",
+    "url": "https://github.com/microsoft/vscode.git",
     "type": "node",
     "defaultEditor": "vscode",
     "workspace": "default"

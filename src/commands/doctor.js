@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { getProjectRoot, readRepos, readSettings, resolveProjectPath } from "../utils/config.js";
+import { getDataRoot, getProjectRoot, readRepos, readSettings, resolveConfigPath, resolveDataPath } from "../utils/config.js";
 import { getWorkspacePath } from "../utils/paths.js";
 import { runCommandResult } from "../utils/shell.js";
 import { doctorRepos } from "./repo.js";
@@ -34,20 +34,25 @@ export function doctor() {
   const repos = readRepos();
   const gitVersion = runCommandResult("git", ["--version"]);
   const nodeVersion = process.version;
-  const reposPath = resolveProjectPath("config/repos.json");
-  const settingsPath = resolveProjectPath("config/settings.json");
+  const reposPath = resolveConfigPath("repos.json");
+  const settingsPath = resolveConfigPath("settings.json");
+  const cachePath = resolveDataPath("cache");
+  const logsPath = resolveDataPath("logs");
   const defaultWorkspace = getWorkspacePath("default");
   const facultyWorkspace = getWorkspacePath("faculdade");
 
   console.log("");
   console.log("GG Doctor");
   console.log(`Projeto: ${getProjectRoot()}`);
+  console.log(`Dados: ${getDataRoot()}`);
   console.log("");
 
   printCheck("Node.js", true, nodeVersion);
   printCheck("Git", gitVersion.ok, gitVersion.output || "git nao encontrado");
   printCheck("config/repos.json", fs.existsSync(reposPath), reposPath);
   printCheck("config/settings.json", fs.existsSync(settingsPath), settingsPath);
+  printCheck("cache", fs.existsSync(cachePath), cachePath);
+  printCheck("logs", fs.existsSync(logsPath), logsPath);
   printCheck("Repositorios cadastrados", repos.length > 0, `${repos.length}`);
   printCheck("Workspace padrao", fs.existsSync(defaultWorkspace), defaultWorkspace);
   printCheck("Workspace faculdade", fs.existsSync(facultyWorkspace), facultyWorkspace);

@@ -1,5 +1,5 @@
 import { select, input } from "@inquirer/prompts";
-import { readRepos, readSettings, resolveProjectPath } from "./utils/config.js";
+import { getDataRoot, readRepos, readSettings, resolveConfigPath } from "./utils/config.js";
 import { showScreenTitle, clearScreen } from "./utils/terminal.js";
 import {
   listRepos,
@@ -283,8 +283,9 @@ async function runOpenRepoAction() {
 function showSettings() {
   const settings = readSettings();
 
-  console.log(`settings.json: ${resolveProjectPath("config/settings.json")}`);
-  console.log(`repos.json: ${resolveProjectPath("config/repos.json")}`);
+  console.log(`data root: ${getDataRoot()}`);
+  console.log(`settings.json: ${resolveConfigPath("settings.json")}`);
+  console.log(`repos.json: ${resolveConfigPath("repos.json")}`);
   console.log("");
   console.log(JSON.stringify(settings, null, 2));
 }

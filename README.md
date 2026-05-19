@@ -23,9 +23,9 @@ Exemplos:
 ```bash
 gg
 gg repo list
-gg repo open dev-study-roadmap --code
-gg ro dev-study-roadmap -c
-gg -ro dev-study-roadmap --c
+gg repo open hello-world --code
+gg ro hello-world -c
+gg -ro hello-world --c
 gg setup faculdade
 gg clean faculdade
 gg doctor
@@ -34,6 +34,50 @@ gg doctor
 ---
 
 ## Instalacao E Desenvolvimento
+
+### Instalacao Publica
+
+Em maquinas Windows, o caminho recomendado e baixar e executar o instalador publicado no GitHub Releases:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$p=Join-Path $env:TEMP 'install-gg.ps1'; Invoke-WebRequest 'https://raw.githubusercontent.com/GUILHERME-GARCIATECH/gg-cli/main/scripts/install-gg.ps1' -OutFile $p; & $p"
+```
+
+Se a maquina ja tiver Node.js/npm, tambem da para usar:
+
+```powershell
+npm exec --yes --package github:GUILHERME-GARCIATECH/gg-cli gg-install
+```
+
+### Instalador Windows
+
+O instalador Inno Setup fica em:
+
+```bash
+installer\gg-cli.iss
+```
+
+Ele instala a CLI em `C:\ProgramData\GG\gg-cli`, cria `config`, `cache` e `logs` em `C:\ProgramData\GG`, cria os workspaces em `C:\.gg` e adiciona `C:\ProgramData\GG\gg-cli\bin` ao PATH do sistema.
+
+O instalador publico e self-contained: ele empacota `dist\gg.exe`, nao exige Node.js/npm na maquina alvo e nao exige Inno Setup fora do ambiente de build.
+
+Para compilar, use o Inno Setup Compiler:
+
+```bash
+npm run build:installer
+```
+
+Para compilar e abrir o instalador a partir do checkout local:
+
+```bash
+npm run install:windows
+```
+
+Isso usa `scripts\build-installer.ps1`, procura `ISCC.exe` no PATH ou nos caminhos padrao do Inno Setup 6 e gera `dist\installer\gg-cli-setup.exe`.
+
+Releases oficiais sao geradas por GitHub Actions quando uma tag `v*` e enviada para o repositorio.
+
+### Desenvolvimento
 
 Instalar dependencias:
 
@@ -73,7 +117,20 @@ Em alguns Windows, `npm test` pode ser bloqueado pela policy do PowerShell; `npm
 
 ## Configuracao
 
-A CLI le configuracoes a partir da raiz real do projeto, nao do diretorio atual do terminal. Isso permite rodar `gg` de qualquer pasta.
+A CLI le configuracoes a partir do data root. Em desenvolvimento, o data root e a propria raiz do projeto. Na instalacao Windows, o wrapper `gg.cmd` define `GG_DATA_ROOT=C:\ProgramData\GG`, entao os JSONs ficam em `C:\ProgramData\GG\config`.
+
+As configs publicas deste repositorio sao exemplos. Configs pessoais devem ficar fora do repo publico, por exemplo em um repositorio privado com seus proprios `repos.json` e `settings.json`.
+
+Se configs pessoais ja tiverem sido commitadas antes de abrir o repositorio, crie um repo publico novo a partir do estado sanitizado ou limpe o historico com uma ferramenta propria para isso antes de publicar.
+
+Para usar configs locais durante desenvolvimento, crie `config/repos.local.json` e `config/settings.local.json` e rode:
+
+```powershell
+$env:GG_USE_LOCAL_CONFIG="1"
+npm start
+```
+
+Esses arquivos locais sao ignorados pelo Git e nao entram no instalador.
 
 ### `config/repos.json`
 
@@ -82,12 +139,12 @@ Lista de repositorios cadastrados:
 ```json
 [
   {
-    "name": "dev-study-roadmap",
-    "description": "Roadmap pessoal de estudos em desenvolvimento",
-    "url": "https://github.com/GUILHERME-GARCIATECH/dev-study-roadmap.git",
+    "name": "hello-world",
+    "description": "Repositorio publico de exemplo do Octocat",
+    "url": "https://github.com/octocat/Hello-World.git",
     "type": "study",
     "defaultEditor": "vscode",
-    "workspace": "faculdade"
+    "workspace": "default"
   }
 ]
 ```
@@ -109,11 +166,11 @@ Configuracoes gerais:
 
 ```json
 {
-  "defaultWorkspace": "C:\\gg-workspace",
-  "facultyWorkspace": "C:\\gg-faculdade",
+  "defaultWorkspace": "C:\\.gg\\default",
+  "facultyWorkspace": "C:\\.gg\\faculdade",
   "defaultGitUser": {
-    "name": "Guilherme Garcia",
-    "email": "guilherme.garciatech@gmail.com"
+    "name": "",
+    "email": ""
   },
   "editors": {
     "vscode": "code",
@@ -127,8 +184,8 @@ Campos usados:
 
 | Campo | Funcao |
 |---|---|
-| `defaultWorkspace` | Pasta base para repositorios comuns. |
-| `facultyWorkspace` | Pasta temporaria usada pelo modo faculdade. |
+| `defaultWorkspace` | Pasta base para repositorios comuns. Padrao: `C:\.gg\default`. |
+| `facultyWorkspace` | Pasta temporaria usada pelo modo faculdade. Padrao: `C:\.gg\faculdade`. |
 | `defaultGitUser` | Nome e email aplicados com `gg git config-local` e `gg setup faculdade`. |
 | `editors.vscode` | Comando ou caminho do VS Code. |
 | `editors.intellij` | Comando ou caminho do IntelliJ IDEA. |
@@ -204,10 +261,10 @@ Opcoes de `repo open`:
 Exemplos equivalentes:
 
 ```bash
-gg repo open dev-study-roadmap --code
-gg r o dev-study-roadmap -c
-gg ro dev-study-roadmap -c
-gg -ro dev-study-roadmap --c
+gg repo open hello-world --code
+gg r o hello-world -c
+gg ro hello-world -c
+gg -ro hello-world --c
 ```
 
 ### Faculdade
@@ -272,7 +329,7 @@ Regras importantes implementadas:
 Quando o Git detectar dono diferente no Windows, a CLI vai sugerir algo como:
 
 ```bash
-git config --global --add safe.directory "C:\gg-faculdade\dev-study-roadmap"
+git config --global --add safe.directory "C:\.gg\default\hello-world"
 ```
 
 Use isso apenas se voce confiar naquela pasta.
@@ -287,8 +344,8 @@ Use isso apenas se voce confiar naquela pasta.
 | `src/menu.js` | Menu interativo auto-limpante. |
 | `src/utils/aliases.js` | Traduz aliases compactos como `-ro` antes do Commander. |
 | `src/utils/terminal.js` | Limpeza de tela e titulo da tela atual. |
-| `src/utils/config.js` | Le e escreve JSON a partir da raiz real do projeto. |
-| `src/utils/paths.js` | Resolve workspaces, paths de repos e validacoes de caminho seguro. |
+| `src/utils/config.js` | Resolve a raiz do projeto e o data root, le e escreve JSON de configuracao. |
+| `src/utils/paths.js` | Resolve workspaces em `C:\.gg`, paths de repos e validacoes de caminho seguro. |
 | `src/utils/shell.js` | Executa comandos com saida herdada ou capturada. |
 | `src/utils/editors.js` | Abre VS Code, IntelliJ, Explorer e terminal. |
 | `src/commands/repo.js` | Cadastro, clone, open, status, pull, doctor e fluxos em lote. |
@@ -310,9 +367,9 @@ npm.cmd test
 
 Os testes cobrem:
 
-- resolucao de config fora da pasta do projeto;
+- resolucao de config em desenvolvimento e via `GG_DATA_ROOT`;
 - normalizacao e validacao de repos;
-- seguranca de paths;
+- workspaces padrao em `C:\.gg` e seguranca de paths;
 - shell helpers sem lancar excecao em falhas esperadas;
 - aliases compactos e aliases do Commander;
 - comandos de help sem efeitos destrutivos.

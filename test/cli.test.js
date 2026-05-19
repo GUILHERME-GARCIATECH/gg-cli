@@ -4,24 +4,32 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { getProjectRoot, resolveProjectPath } from "../src/utils/config.js";
 
+function runCli(args, options = {}) {
+  const indexPath = resolveProjectPath("src/index.js");
+
+  return spawnSync(process.execPath, [indexPath, ...args], {
+    encoding: "utf-8",
+    env: {
+      ...process.env,
+      GG_USE_LOCAL_CONFIG: "0"
+    },
+    ...options
+  });
+}
+
 test("repo list encontra config mesmo rodando fora da pasta do projeto", () => {
   const projectRoot = getProjectRoot();
-  const indexPath = resolveProjectPath("src/index.js");
-  const result = spawnSync(process.execPath, [indexPath, "repo", "list"], {
-    cwd: path.dirname(projectRoot),
-    encoding: "utf-8"
+  const result = runCli(["repo", "list"], {
+    cwd: path.dirname(projectRoot)
   });
 
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /dev-study-roadmap/);
-  assert.match(result.stdout, /obi-study-roadmap/);
+  assert.match(result.stdout, /git/);
+  assert.match(result.stdout, /hello-world/);
 });
 
 test("help principal lista comandos expandidos", () => {
-  const indexPath = resolveProjectPath("src/index.js");
-  const result = spawnSync(process.execPath, [indexPath, "--help"], {
-    encoding: "utf-8"
-  });
+  const result = runCli(["--help"]);
 
   assert.equal(result.status, 0);
   assert.match(result.stdout, /setup/);
@@ -30,40 +38,28 @@ test("help principal lista comandos expandidos", () => {
 });
 
 test("alias compacto -rl lista repositorios", () => {
-  const indexPath = resolveProjectPath("src/index.js");
-  const result = spawnSync(process.execPath, [indexPath, "-rl"], {
-    encoding: "utf-8"
-  });
+  const result = runCli(["-rl"]);
 
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /dev-study-roadmap/);
+  assert.match(result.stdout, /hello-world/);
 });
 
 test("alias ro mostra help de repo open", () => {
-  const indexPath = resolveProjectPath("src/index.js");
-  const result = spawnSync(process.execPath, [indexPath, "ro", "--help"], {
-    encoding: "utf-8"
-  });
+  const result = runCli(["ro", "--help"]);
 
   assert.equal(result.status, 0);
   assert.match(result.stdout, /Usage: gg repo open/);
 });
 
 test("alias -ro mostra help de repo open", () => {
-  const indexPath = resolveProjectPath("src/index.js");
-  const result = spawnSync(process.execPath, [indexPath, "-ro", "--help"], {
-    encoding: "utf-8"
-  });
+  const result = runCli(["-ro", "--help"]);
 
   assert.equal(result.status, 0);
   assert.match(result.stdout, /Usage: gg repo open/);
 });
 
 test("alias r mostra help de repo", () => {
-  const indexPath = resolveProjectPath("src/index.js");
-  const result = spawnSync(process.execPath, [indexPath, "r", "--help"], {
-    encoding: "utf-8"
-  });
+  const result = runCli(["r", "--help"]);
 
   assert.equal(result.status, 0);
   assert.match(result.stdout, /Usage: gg repo\|r/);

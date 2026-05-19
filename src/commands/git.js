@@ -105,7 +105,7 @@ export function gitConfigLocal(repoName = null) {
 
   if (!repoPath) {
     console.log("Este comando precisa ser executado dentro de um repositorio Git ou receber um repo cadastrado.");
-    console.log("Exemplo: gg git config-local dev-study-roadmap");
+    console.log("Exemplo: gg git config-local hello-world");
     return {
       ok: false,
       message: "Repositorio local nao encontrado."

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { input, select, confirm } from "@inquirer/prompts";
 import { readRepos, saveRepos } from "../utils/config.js";
-import { getRepoPath, getWorkspacePath, isInsidePath } from "../utils/paths.js";
+import { ensureWorkspaceDirectory, getRepoPath, getWorkspacePath, isInsidePath } from "../utils/paths.js";
 import { runCommand, runCommandResult } from "../utils/shell.js";
 import { openRepoWithEditor } from "../utils/editors.js";
 
@@ -37,13 +37,7 @@ export function getReposByWorkspace(workspaceName) {
 }
 
 export function ensureWorkspaceExists(repo) {
-  const workspacePath = getWorkspacePath(repo.workspace);
-
-  if (!fs.existsSync(workspacePath)) {
-    fs.mkdirSync(workspacePath, { recursive: true });
-  }
-
-  return workspacePath;
+  return ensureWorkspaceDirectory(repo.workspace);
 }
 
 function showRepoNotFound(name) {

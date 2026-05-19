@@ -1,5 +1,4 @@
-import fs from "node:fs";
-import { getWorkspacePath } from "../utils/paths.js";
+import { ensureWorkspaceDirectory, getWorkspacePath } from "../utils/paths.js";
 import {
   cloneRepoIfNeeded,
   getRepoLocalState,
@@ -7,12 +6,6 @@ import {
 } from "./repo.js";
 import { configureRepoGitUser } from "./git.js";
 import { readSettings } from "../utils/config.js";
-
-function ensureDirectory(path) {
-  if (!fs.existsSync(path)) {
-    fs.mkdirSync(path, { recursive: true });
-  }
-}
 
 export function setupFaculty() {
   const settings = readSettings();
@@ -23,7 +16,7 @@ export function setupFaculty() {
   console.log("Setup faculdade");
   console.log(`Workspace: ${workspacePath}`);
 
-  ensureDirectory(workspacePath);
+  ensureWorkspaceDirectory("faculdade");
 
   if (repos.length === 0) {
     console.log("Nenhum repositorio com workspace \"faculdade\" foi encontrado.");
