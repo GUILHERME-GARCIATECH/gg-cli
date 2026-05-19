@@ -46,5 +46,21 @@
     "type": "node",
     "defaultEditor": "vscode",
     "workspace": "default"
+  },
+  {
+    "name": "script-youtube",
+    "description": "Script para baixar playlist no youtube",
+    "url": "https://github.com/GUILHERME-GARCIATECH/script-youtube-playlist.git",
+    "type": "automation",
+    "defaultEditor": "vscode",
+    "workspace": "default"
+  },
+  {
+    "name": "ass-cli",
+    "description": "CLI da Assessoria Tech",
+    "url": "https://github.com/DEV-ASSESSORIA-TECH/ass-cli.git",
+    "type": "node",
+    "defaultEditor": "vscode",
+    "workspace": "default"
   }
 ]
