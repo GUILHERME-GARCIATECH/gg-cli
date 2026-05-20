@@ -1,6 +1,14 @@
-<div align="center">
-  <img src="icon.png" width="500" alt="Banner do Projeto">
-</div>
+<p align="center">
+  <img src="icon.png" width="180" alt="GG Logo">
+</p>
+
+<h3 align="center">CLI pessoal para automatizar tarefas do dia a dia</h3>
+
+<p align="center">
+  Gerenciamento de repositórios, abertura rápida de projetos, setup de ambiente de faculdade, limpeza segura e diagnósticos simples do PC.
+</p>
+
+
 
 CLI pessoal para automatizar tarefas do dia a dia: gerenciamento de repositorios, abertura rapida de projetos, setup de ambiente de faculdade, limpeza segura e diagnosticos simples do PC.
 
