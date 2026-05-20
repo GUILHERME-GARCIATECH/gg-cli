@@ -1,4 +1,6 @@
-# GG CLI
+<div align="center">
+  <img src="icon.png" width="500" alt="Banner do Projeto">
+</div>
 
 CLI pessoal para automatizar tarefas do dia a dia: gerenciamento de repositorios, abertura rapida de projetos, setup de ambiente de faculdade, limpeza segura e diagnosticos simples do PC.
 
