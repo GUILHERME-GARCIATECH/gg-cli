@@ -13,25 +13,25 @@ import { translateAliases } from "./utils/aliases.js";
 const program = new Command();
 
 program
-    .name("gg")
-    .description("CLI pessoal")
-    .version("0.1.0");
+  .name("gg")
+  .description("CLI pessoal")
+  .version("0.1.0");
 
 program
-    .command("hello")
-    .alias("hi")
-    .description("Teste se a CLI esta funcionando")
-    .action(() => {
-        console.log("GG CLI Funcionando");
-    })
+  .command("hello")
+  .alias("hi")
+  .description("Teste se a CLI esta funcionando")
+  .action(() => {
+    console.log("GG CLI Funcionando");
+  });
 
 program
-    .command("menu")
-    .alias("m")
-    .description("Abre o menu interativo")
-    .action(async () => {
-        await openMainMenu();
-    });
+  .command("menu")
+  .alias("m")
+  .description("Abre o menu interativo")
+  .action(async () => {
+    await openMainMenu();
+  });
 
 registerRepoCommands(program);
 registerSetupCommands(program);
@@ -40,8 +40,21 @@ registerGitCommands(program);
 registerPcCommands(program);
 registerDoctorCommand(program);
 
-if (process.argv.length <= 2) {
+async function main(argv = process.argv) {
+  if (argv.length <= 2) {
     await openMainMenu();
-} else {
-    program.parse(translateAliases(process.argv));
+    return;
+  }
+
+  await program.parseAsync(translateAliases(argv));
 }
+
+main().catch((error) => {
+  console.error(error?.message || error);
+
+  if (process.env.GG_DEBUG === "1" && error?.stack) {
+    console.error(error.stack);
+  }
+
+  process.exitCode = 1;
+});

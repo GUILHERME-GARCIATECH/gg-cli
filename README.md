@@ -61,6 +61,16 @@ Ele instala a CLI em `C:\ProgramData\GG\gg-cli`, cria `config`, `cache` e `logs`
 
 O instalador publico e self-contained: ele empacota `dist\gg.exe`, nao exige Node.js/npm na maquina alvo e nao exige Inno Setup fora do ambiente de build.
 
+O executavel e gerado com Node.js SEA a partir de um bundle unico criado pelo `esbuild`. O projeto nao usa mais `pkg`; Node 18 tambem nao e mais suportado para desenvolvimento/build porque as dependencias atuais exigem runtimes mais novos.
+
+Para compilar apenas o executavel:
+
+```bash
+npm run build:exe
+```
+
+Esse comando gera e valida `dist\gg.exe`.
+
 Para compilar, use o Inno Setup Compiler:
 
 ```bash
@@ -78,6 +88,8 @@ Isso usa `scripts\build-installer.ps1`, procura `ISCC.exe` no PATH ou nos caminh
 Releases oficiais sao geradas por GitHub Actions quando uma tag `v*` e enviada para o repositorio.
 
 ### Desenvolvimento
+
+Requisito de desenvolvimento/build: Node.js 24 ou superior.
 
 Instalar dependencias:
 

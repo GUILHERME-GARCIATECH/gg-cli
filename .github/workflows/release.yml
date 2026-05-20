@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
           cache: npm
 
       - name: Install dependencies
@@ -30,6 +30,12 @@ jobs:
 
       - name: Build executable
         run: npm run build:exe
+
+      - name: Validate executable
+        shell: pwsh
+        run: |
+          .\dist\gg.exe hello
+          .\dist\gg.exe --help
 
       - name: Install Inno Setup
         run: choco install innosetup -y --no-progress

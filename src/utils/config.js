@@ -1,12 +1,53 @@
 import fs from "node:fs";
 import path from "node:path";
+import { isSea } from "node:sea";
 import { fileURLToPath } from "node:url";
 
-const CURRENT_FILE = fileURLToPath(import.meta.url);
-const CURRENT_DIR = path.dirname(CURRENT_FILE);
-const PROJECT_ROOT = path.resolve(CURRENT_DIR, "../..");
 const DATA_ROOT_ENV = "GG_DATA_ROOT";
 const LOCAL_CONFIG_ENV = "GG_USE_LOCAL_CONFIG";
+
+function getCurrentFilePath() {
+  if (isSea()) {
+    return process.execPath;
+  }
+
+  if (typeof __filename === "string") {
+    return __filename;
+  }
+
+  return fileURLToPath(import.meta.url);
+}
+
+function resolveProjectRoot() {
+  const currentFile = getCurrentFilePath();
+  const currentDir = path.dirname(currentFile);
+
+  if (isSea()) {
+    return path.resolve(currentDir, "..");
+  }
+
+  return path.resolve(currentDir, "../..");
+}
+
+function resolveInstalledDataRoot() {
+  if (!isSea()) {
+    return null;
+  }
+
+  const binDir = path.dirname(process.execPath);
+  const appRoot = path.dirname(binDir);
+
+  if (
+    path.basename(binDir).toLowerCase() === "bin" &&
+    path.basename(appRoot).toLowerCase() === "gg-cli"
+  ) {
+    return path.dirname(appRoot);
+  }
+
+  return null;
+}
+
+const PROJECT_ROOT = resolveProjectRoot();
 
 export function getProjectRoot() {
   return PROJECT_ROOT;
@@ -18,7 +59,13 @@ export function resolveProjectPath(relativePath) {
 
 export function getDataRoot() {
   const configuredRoot = process.env[DATA_ROOT_ENV]?.trim();
-  return configuredRoot ? path.resolve(configuredRoot) : PROJECT_ROOT;
+  const installedRoot = resolveInstalledDataRoot();
+
+  if (configuredRoot) {
+    return path.resolve(configuredRoot);
+  }
+
+  return installedRoot || PROJECT_ROOT;
 }
 
 export function resolveDataPath(relativePath) {

@@ -8,11 +8,11 @@ if exist "%~dp0gg.exe" (
   exit /b %ERRORLEVEL%
 )
 
-where node >nul 2>nul
-if errorlevel 1 (
-  echo Node.js nao encontrado no PATH.
-  echo Instale o Node.js e tente novamente.
-  exit /b 1
+if exist "%~dp0..\dist\gg.exe" (
+  "%~dp0..\dist\gg.exe" %*
+  exit /b %ERRORLEVEL%
 )
 
-node "%~dp0..\src\index.js" %*
+echo GG CLI nao encontrou o executavel gg.exe.
+echo Reinstale pelo instalador oficial ou rode npm run build:exe neste checkout.
+exit /b 1
