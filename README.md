@@ -131,7 +131,7 @@ Em alguns Windows, `npm test` pode ser bloqueado pela policy do PowerShell; `npm
 
 A CLI le configuracoes a partir do data root. Em desenvolvimento, o data root e a propria raiz do projeto. Na instalacao Windows, o wrapper `gg.cmd` define `GG_DATA_ROOT=C:\ProgramData\GG`, entao os JSONs ficam em `C:\ProgramData\GG\config`.
 
-As configs publicas deste repositorio sao exemplos. Configs pessoais devem ficar fora do repo publico, por exemplo em um repositorio privado com seus proprios `repos.json` e `settings.json`.
+As configs publicas deste repositorio sao exemplos. Configs pessoais devem ficar fora do repo publico, por exemplo em um repositorio privado com `repos.local.json` e `settings.local.json`.
 
 Se configs pessoais ja tiverem sido commitadas antes de abrir o repositorio, crie um repo publico novo a partir do estado sanitizado ou limpe o historico com uma ferramenta propria para isso antes de publicar.
 
@@ -143,6 +143,43 @@ npm start
 ```
 
 Esses arquivos locais sao ignorados pelo Git e nao entram no instalador.
+
+### Repo privado de configuracao
+
+O jeito recomendado para usar a GG CLI em maquinas diferentes e criar um repo privado, por exemplo `gg-cli-config`, com estes arquivos na raiz:
+
+```text
+repos.local.json
+settings.local.json
+```
+
+Depois importe uma vez:
+
+```powershell
+gg config import https://github.com/SEU-USUARIO/gg-cli-config.git
+```
+
+Ou via SSH:
+
+```powershell
+gg config import git@github.com:SEU-USUARIO/gg-cli-config.git
+```
+
+Depois do primeiro import, o GG lembra essa origem. Nas proximas maquinas ou atualizacoes, basta:
+
+```powershell
+gg config import
+```
+
+Para subir suas configs atuais para o repo privado:
+
+```powershell
+gg config push
+```
+
+Esse comando copia `config/repos.json` para `repos.local.json`, copia `config/settings.json` para `settings.local.json`, cria commit se houver mudancas e executa `git push`.
+
+Antes de importar por cima de uma config pessoal, a CLI cria backup em `config/backups`. Se a config atual ainda for a config coringa publica, nenhum backup e criado. A CLI usa a autenticacao normal do Git; para repos privados, deixe GitHub/Git Credential Manager ou SSH configurado antes de rodar import/push. Para `gg config push`, o Git tambem precisa ter `user.name` e `user.email` configurados.
 
 ### `config/repos.json`
 
@@ -293,6 +330,14 @@ gg -ro hello-world --c
 | `gg git whoami` | `gg g w` | Mostra usuario Git global e local. |
 | `gg git config-local [repo]` | `gg g c [repo]` | Aplica `defaultGitUser` no repo atual ou em repo cadastrado. |
 
+### Configuracoes
+
+| Comando | Alias | Funcao |
+|---|---|---|
+| `gg config list` | `gg c l` | Mostra paths, origem lembrada, tipo da config, settings e repos cadastrados. |
+| `gg config import [source]` | `gg c i [source]` | Importa configs de um repo privado ou pasta local. |
+| `gg config push [source]` | `gg c p [source]` | Sobe as configs atuais para o repo privado com commit e push. |
+
 ### PC
 
 | Comando | Alias | Funcao |
@@ -364,6 +409,7 @@ Use isso apenas se voce confiar naquela pasta.
 | `src/commands/setup.js` | Setup do workspace da faculdade. |
 | `src/commands/clean.js` | Limpeza segura do workspace da faculdade. |
 | `src/commands/git.js` | Whoami e configuracao Git local. |
+| `src/commands/config.js` | Import, push, backup e listagem de configuracoes pessoais. |
 | `src/commands/pc.js` | Diagnosticos simples do PC. |
 | `src/commands/doctor.js` | Diagnostico geral da CLI. |
 
@@ -384,6 +430,7 @@ Os testes cobrem:
 - workspaces padrao em `C:\.gg` e seguranca de paths;
 - shell helpers sem lancar excecao em falhas esperadas;
 - aliases compactos e aliases do Commander;
+- import/push de configuracoes pessoais com backup;
 - comandos de help sem efeitos destrutivos.
 
 ---

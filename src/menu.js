@@ -1,5 +1,5 @@
 import { select, input } from "@inquirer/prompts";
-import { getDataRoot, readRepos, readSettings, resolveConfigPath } from "./utils/config.js";
+import { readRepos } from "./utils/config.js";
 import { showScreenTitle, clearScreen } from "./utils/terminal.js";
 import {
   listRepos,
@@ -18,6 +18,7 @@ import { cleanFaculty } from "./commands/clean.js";
 import { gitWhoami, gitConfigLocal } from "./commands/git.js";
 import { pcInfo, pcDisk, pcNetwork, pcIp, pcDns } from "./commands/pc.js";
 import { doctor } from "./commands/doctor.js";
+import { getSavedConfigSource, listConfig, runConfigImport, runConfigPush } from "./commands/config.js";
 
 export async function openMainMenu() {
   let running = true;
@@ -50,7 +51,7 @@ export async function openMainMenu() {
     }
 
     if (option === "settings") {
-      await runAction("Configuracoes", () => showSettings());
+      await openConfigMenu();
     }
 
     if (option === "doctor") {
@@ -60,6 +61,39 @@ export async function openMainMenu() {
     if (option === "exit") {
       running = false;
       clearScreen();
+    }
+  }
+}
+
+async function openConfigMenu() {
+  let running = true;
+
+  while (running) {
+    const option = await promptMenu("Configuracoes", "Escolha uma acao:", [
+      { name: "Listar configuracoes", value: "list" },
+      { name: "Importar de repo privado", value: "import" },
+      { name: "Subir para repo privado", value: "push" },
+      { name: "Voltar", value: "back" }
+    ]);
+
+    if (option === "list") {
+      await runAction("Configuracoes - listar", () => listConfig());
+    }
+
+    if (option === "import") {
+      await runAction("Configuracoes - importar", async () => {
+        await runConfigImportFromMenu();
+      });
+    }
+
+    if (option === "push") {
+      await runAction("Configuracoes - subir", async () => {
+        await runConfigPushFromMenu();
+      });
+    }
+
+    if (option === "back") {
+      running = false;
     }
   }
 }
@@ -280,14 +314,30 @@ async function runOpenRepoAction() {
   await pause();
 }
 
-function showSettings() {
-  const settings = readSettings();
+async function readConfigSourceFromMenu() {
+  const savedSource = getSavedConfigSource();
+  const source = await input({
+    message: "Repo privado ou pasta local:",
+    default: savedSource?.source || ""
+  });
 
-  console.log(`data root: ${getDataRoot()}`);
-  console.log(`settings.json: ${resolveConfigPath("settings.json")}`);
-  console.log(`repos.json: ${resolveConfigPath("repos.json")}`);
-  console.log("");
-  console.log(JSON.stringify(settings, null, 2));
+  return source.trim() || null;
+}
+
+async function runConfigImportFromMenu() {
+  try {
+    await runConfigImport(await readConfigSourceFromMenu());
+  } catch (error) {
+    console.log(error?.message || error);
+  }
+}
+
+async function runConfigPushFromMenu() {
+  try {
+    await runConfigPush(await readConfigSourceFromMenu());
+  } catch (error) {
+    console.log(error?.message || error);
+  }
 }
 
 async function selectRepoName() {

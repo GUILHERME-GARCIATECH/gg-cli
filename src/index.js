@@ -8,6 +8,7 @@ import { registerCleanCommands } from "./commands/clean.js";
 import { registerGitCommands } from "./commands/git.js";
 import { registerPcCommands } from "./commands/pc.js";
 import { registerDoctorCommand } from "./commands/doctor.js";
+import { registerConfigCommands } from "./commands/config.js";
 import { translateAliases } from "./utils/aliases.js";
 
 const program = new Command();
@@ -39,6 +40,7 @@ registerCleanCommands(program);
 registerGitCommands(program);
 registerPcCommands(program);
 registerDoctorCommand(program);
+registerConfigCommands(program);
 
 async function main(argv = process.argv) {
   if (argv.length <= 2) {

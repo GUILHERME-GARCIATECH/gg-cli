@@ -1,6 +1,8 @@
 node_modules/
 dist/
 config/*.local.json
+config/config-source.json
+config/backups/
 config/private/
 *.log
 npm-debug.log*
