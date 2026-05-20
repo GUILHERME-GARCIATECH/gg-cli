@@ -2,7 +2,7 @@
   <img src="icon.png" alt="GG Banner" width="100%">
 </p>
 
-<h3 align="center">CLI pessoal para automatizar tarefas do dia a dia</h3>
+<h1 align="center">CLI pessoal para automatizar tarefas do dia a dia</h1>
 
 Gerenciamento de repositórios, abertura rápida de projetos, setup de ambiente, limpeza segura e diagnósticos simples do PC.
 
