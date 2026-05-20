@@ -1,18 +1,12 @@
 <p align="center">
-  <img src="icon.png" width="180" alt="GG Logo">
+  <img src="icon.png" alt="GG Banner" width="100%">
 </p>
 
 <h3 align="center">CLI pessoal para automatizar tarefas do dia a dia</h3>
 
-<p align="center">
-  Gerenciamento de repositórios, abertura rápida de projetos, setup de ambiente de faculdade, limpeza segura e diagnósticos simples do PC.
-</p>
+Gerenciamento de repositórios, abertura rápida de projetos, setup de ambiente, limpeza segura e diagnósticos simples do PC.
 
-
-
-CLI pessoal para automatizar tarefas do dia a dia: gerenciamento de repositorios, abertura rapida de projetos, setup de ambiente de faculdade, limpeza segura e diagnosticos simples do PC.
-
-O foco e uso pessoal em Windows, principalmente para maquinas temporarias. A ferramenta prioriza comandos rapidos, menu interativo limpo e seguranca antes de qualquer acao destrutiva.
+O foco e uso pessoal em Windows, principalmente para maquinas temporarias. A ferramenta prioriza comandos rapidos, menu interativo limpo e seguranca antes de qualquer acao destrutiva.  
 
 ---
 
