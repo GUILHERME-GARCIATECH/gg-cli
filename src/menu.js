@@ -1,6 +1,15 @@
-import { select, input } from "@inquirer/prompts";
 import { readRepos } from "./utils/config.js";
 import { showScreenTitle, clearScreen } from "./utils/terminal.js";
+import { printBanner } from "./ui/banner.js";
+import { openExternalUrl, resolveLinks } from "./ui/links.js";
+import {
+  ICONS,
+  MENU_EXIT,
+  isMenuBack,
+  isMenuExit,
+  promptInput,
+  promptMenu as promptUiMenu
+} from "./ui/menu.js";
 import {
   listRepos,
   addRepoInteractive,
@@ -25,341 +34,457 @@ export async function openMainMenu() {
 
   while (running) {
     const option = await promptMenu("GG CLI", "O que voce quer fazer?", [
-      { name: "Repositorios", value: "repos" },
-      { name: "Faculdade", value: "faculty" },
-      { name: "Git", value: "git" },
-      { name: "Manutencao do PC", value: "pc" },
-      { name: "Configuracoes", value: "settings" },
-      { name: "Doctor", value: "doctor" },
-      { name: "Sair", value: "exit" }
-    ]);
+      menuChoice("Repositorios", "repos", ICONS.repos),
+      menuChoice("Faculdade", "faculty", ICONS.faculty),
+      menuChoice("Git", "git", ICONS.git),
+      menuChoice("Manutencao do PC", "pc", ICONS.pc),
+      menuChoice("Configuracoes", "settings", ICONS.settings),
+      menuChoice("Doctor", "doctor", ICONS.doctor),
+      menuChoice("Links", "links", ICONS.links),
+      menuChoice("Sair", "exit", ICONS.exit)
+    ], { main: true, allowBack: false });
 
-    if (option === "repos") {
-      await openRepoMenu();
+    if (isMenuExit(option) || option === "exit") {
+      running = false;
+      clearScreen();
+      continue;
     }
 
-    if (option === "faculty") {
-      await openFacultyMenu();
-    }
+    const result = await runMainOption(option);
 
-    if (option === "git") {
-      await openGitMenu();
-    }
-
-    if (option === "pc") {
-      await openPcMenu();
-    }
-
-    if (option === "settings") {
-      await openConfigMenu();
-    }
-
-    if (option === "doctor") {
-      await runAction("Doctor", () => doctor());
-    }
-
-    if (option === "exit") {
+    if (isMenuExit(result)) {
       running = false;
       clearScreen();
     }
   }
 }
 
-async function openConfigMenu() {
-  let running = true;
+async function runMainOption(option) {
+  if (option === "repos") {
+    return await openRepoMenu();
+  }
 
-  while (running) {
+  if (option === "faculty") {
+    return await openFacultyMenu();
+  }
+
+  if (option === "git") {
+    return await openGitMenu();
+  }
+
+  if (option === "pc") {
+    return await openPcMenu();
+  }
+
+  if (option === "links") {
+    return await openLinksMenu();
+  }
+
+  if (option === "settings") {
+    return await openConfigMenu();
+  }
+
+  if (option === "doctor") {
+    return await runAction("Doctor", () => doctor());
+  }
+
+  return null;
+}
+
+async function openConfigMenu() {
+  while (true) {
     const option = await promptMenu("Configuracoes", "Escolha uma acao:", [
-      { name: "Listar configuracoes", value: "list" },
-      { name: "Importar de repo privado", value: "import" },
-      { name: "Subir para repo privado", value: "push" },
-      { name: "Voltar", value: "back" }
+      menuChoice("Listar configuracoes", "list"),
+      menuChoice("Importar de repo privado", "import"),
+      menuChoice("Subir para repo privado", "push"),
+      backChoice()
     ]);
 
-    if (option === "list") {
-      await runAction("Configuracoes - listar", () => listConfig());
+    if (isCloseSubmenuOption(option)) {
+      return option === MENU_EXIT ? MENU_EXIT : null;
     }
 
-    if (option === "import") {
-      await runAction("Configuracoes - importar", async () => {
-        await runConfigImportFromMenu();
-      });
+    if (option === "list" && isMenuExit(await runAction("Configuracoes - listar", () => listConfig()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "push") {
-      await runAction("Configuracoes - subir", async () => {
-        await runConfigPushFromMenu();
-      });
+    if (option === "import" && isMenuExit(await runAction("Configuracoes - importar", runConfigImportFromMenu))) {
+      return MENU_EXIT;
     }
 
-    if (option === "back") {
-      running = false;
+    if (option === "push" && isMenuExit(await runAction("Configuracoes - subir", runConfigPushFromMenu))) {
+      return MENU_EXIT;
     }
   }
 }
 
 async function openRepoMenu() {
-  let running = true;
-
-  while (running) {
+  while (true) {
     const option = await promptMenu("Repositorios", "O que voce quer fazer?", [
-      { name: "Listar repositorios", value: "list" },
-      { name: "Adicionar repositorio", value: "add" },
-      { name: "Remover repositorio", value: "remove" },
-      { name: "Clonar repositorio", value: "clone" },
-      { name: "Abrir repositorio", value: "open" },
-      { name: "Ver status de um repositorio", value: "status" },
-      { name: "Atualizar um repositorio", value: "pull" },
-      { name: "Ver status de todos", value: "status-all" },
-      { name: "Atualizar todos", value: "pull-all" },
-      { name: "Doctor de repositorios", value: "doctor" },
-      { name: "Voltar", value: "back" }
+      menuChoice("Listar repositorios", "list"),
+      menuChoice("Adicionar repositorio", "add"),
+      menuChoice("Remover repositorio", "remove"),
+      menuChoice("Clonar repositorio", "clone"),
+      menuChoice("Abrir repositorio", "open"),
+      menuChoice("Ver status de um repositorio", "status"),
+      menuChoice("Atualizar um repositorio", "pull"),
+      menuChoice("Ver status de todos", "status-all"),
+      menuChoice("Atualizar todos", "pull-all"),
+      menuChoice("Doctor de repositorios", "doctor"),
+      backChoice()
     ]);
 
-    if (option === "list") {
-      await runAction("Repositorios - listar", () => listRepos());
+    if (isCloseSubmenuOption(option)) {
+      return option === MENU_EXIT ? MENU_EXIT : null;
     }
 
-    if (option === "add") {
-      await runAction("Repositorios - adicionar", async () => {
-        await addRepoInteractive();
-      });
+    if (option === "list" && isMenuExit(await runAction("Repositorios - listar", () => listRepos()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "remove") {
-      await runRepoSelectionAction("Repositorios - remover", async (repoName) => {
-        await removeRepoInteractive(repoName);
-      });
+    if (option === "add" && isMenuExit(await runAction("Repositorios - adicionar", addRepoInteractive))) {
+      return MENU_EXIT;
     }
 
-    if (option === "clone") {
-      await runRepoSelectionAction("Repositorios - clonar", (repoName) => {
-        cloneRepoByName(repoName);
-      });
+    if (option === "remove" && isMenuExit(await runRepoSelectionAction("Repositorios - remover", async (repoName) => {
+      await removeRepoInteractive(repoName);
+    }))) {
+      return MENU_EXIT;
     }
 
-    if (option === "open") {
-      await runOpenRepoAction();
+    if (option === "clone" && isMenuExit(await runRepoSelectionAction("Repositorios - clonar", (repoName) => {
+      cloneRepoByName(repoName);
+    }))) {
+      return MENU_EXIT;
     }
 
-    if (option === "status") {
-      await runRepoSelectionAction("Repositorios - status", (repoName) => {
-        statusRepoByName(repoName);
-      });
+    if (option === "open" && isMenuExit(await runOpenRepoAction())) {
+      return MENU_EXIT;
     }
 
-    if (option === "pull") {
-      await runRepoSelectionAction("Repositorios - atualizar", (repoName) => {
-        pullRepoByName(repoName);
-      });
+    if (option === "status" && isMenuExit(await runRepoSelectionAction("Repositorios - status", (repoName) => {
+      statusRepoByName(repoName);
+    }))) {
+      return MENU_EXIT;
     }
 
-    if (option === "status-all") {
-      await runAction("Repositorios - status de todos", () => statusAllRepos());
+    if (option === "pull" && isMenuExit(await runRepoSelectionAction("Repositorios - atualizar", (repoName) => {
+      pullRepoByName(repoName);
+    }))) {
+      return MENU_EXIT;
     }
 
-    if (option === "pull-all") {
-      await runAction("Repositorios - atualizar todos", () => pullAllRepos());
+    if (option === "status-all" && isMenuExit(await runAction("Repositorios - status de todos", () => statusAllRepos()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "doctor") {
-      await runAction("Repositorios - doctor", () => doctorRepos());
+    if (option === "pull-all" && isMenuExit(await runAction("Repositorios - atualizar todos", () => pullAllRepos()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "back") {
-      running = false;
+    if (option === "doctor" && isMenuExit(await runAction("Repositorios - doctor", () => doctorRepos()))) {
+      return MENU_EXIT;
     }
   }
 }
 
 async function openFacultyMenu() {
-  let running = true;
-
-  while (running) {
+  while (true) {
     const option = await promptMenu("Faculdade", "Escolha uma acao:", [
-      { name: "Setup faculdade", value: "setup" },
-      { name: "Limpar faculdade", value: "clean" },
-      { name: "Voltar", value: "back" }
+      menuChoice("Setup faculdade", "setup"),
+      menuChoice("Limpar faculdade", "clean"),
+      backChoice()
     ]);
 
-    if (option === "setup") {
-      await runAction("Faculdade - setup", () => setupFaculty());
+    if (isCloseSubmenuOption(option)) {
+      return option === MENU_EXIT ? MENU_EXIT : null;
     }
 
-    if (option === "clean") {
-      await runAction("Faculdade - limpeza", async () => {
-        await cleanFaculty();
-      });
+    if (option === "setup" && isMenuExit(await runAction("Faculdade - setup", () => setupFaculty()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "back") {
-      running = false;
+    if (option === "clean" && isMenuExit(await runAction("Faculdade - limpeza", cleanFaculty))) {
+      return MENU_EXIT;
     }
   }
 }
 
 async function openGitMenu() {
-  let running = true;
-
-  while (running) {
+  while (true) {
     const option = await promptMenu("Git", "Escolha uma acao:", [
-      { name: "Whoami", value: "whoami" },
-      { name: "Configurar Git local no diretorio atual", value: "config-current" },
-      { name: "Configurar Git local em repo cadastrado", value: "config-repo" },
-      { name: "Voltar", value: "back" }
+      menuChoice("Whoami", "whoami"),
+      menuChoice("Configurar Git local no diretorio atual", "config-current"),
+      menuChoice("Configurar Git local em repo cadastrado", "config-repo"),
+      backChoice()
     ]);
 
-    if (option === "whoami") {
-      await runAction("Git - whoami", () => gitWhoami());
+    if (isCloseSubmenuOption(option)) {
+      return option === MENU_EXIT ? MENU_EXIT : null;
     }
 
-    if (option === "config-current") {
-      await runAction("Git - config local", () => gitConfigLocal());
+    if (option === "whoami" && isMenuExit(await runAction("Git - whoami", () => gitWhoami()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "config-repo") {
-      await runRepoSelectionAction("Git - config local em repo", (repoName) => {
-        gitConfigLocal(repoName);
-      });
+    if (option === "config-current" && isMenuExit(await runAction("Git - config local", () => gitConfigLocal()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "back") {
-      running = false;
+    if (option === "config-repo" && isMenuExit(await runRepoSelectionAction("Git - config local em repo", (repoName) => {
+      gitConfigLocal(repoName);
+    }))) {
+      return MENU_EXIT;
     }
   }
 }
 
 async function openPcMenu() {
-  let running = true;
-
-  while (running) {
+  while (true) {
     const option = await promptMenu("Manutencao do PC", "Escolha uma acao:", [
-      { name: "Info", value: "info" },
-      { name: "Disco", value: "disk" },
-      { name: "Rede completa", value: "network" },
-      { name: "IP", value: "ip" },
-      { name: "DNS", value: "dns" },
-      { name: "Voltar", value: "back" }
+      menuChoice("Info", "info"),
+      menuChoice("Disco", "disk"),
+      menuChoice("Rede completa", "network"),
+      menuChoice("IP", "ip"),
+      menuChoice("DNS", "dns"),
+      backChoice()
     ]);
 
-    if (option === "info") {
-      await runAction("PC - info", () => pcInfo());
+    if (isCloseSubmenuOption(option)) {
+      return option === MENU_EXIT ? MENU_EXIT : null;
     }
 
-    if (option === "disk") {
-      await runAction("PC - disco", () => pcDisk());
+    if (option === "info" && isMenuExit(await runAction("PC - info", () => pcInfo()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "network") {
-      await runAction("PC - rede", () => pcNetwork());
+    if (option === "disk" && isMenuExit(await runAction("PC - disco", () => pcDisk()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "ip") {
-      await runAction("PC - ip", () => pcIp());
+    if (option === "network" && isMenuExit(await runAction("PC - rede", () => pcNetwork()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "dns") {
-      await runAction("PC - dns", () => pcDns());
+    if (option === "ip" && isMenuExit(await runAction("PC - ip", () => pcIp()))) {
+      return MENU_EXIT;
     }
 
-    if (option === "back") {
-      running = false;
+    if (option === "dns" && isMenuExit(await runAction("PC - dns", () => pcDns()))) {
+      return MENU_EXIT;
     }
   }
 }
 
-async function promptMenu(title, message, choices) {
-  showScreenTitle(title);
-  return await select({ message, choices });
+async function openLinksMenu() {
+  while (true) {
+    const links = resolveLinks();
+    const option = await promptMenu("Links", "Escolha um link para abrir:", [
+      ...links.map((link) => ({
+        ...menuChoice(link.configured ? `Abrir ${link.label}` : `${link.label} nao configurado`, link.key, ICONS.open),
+        disabled: link.configured ? false : "configure em settings.json"
+      })),
+      backChoice()
+    ]);
+
+    if (isCloseSubmenuOption(option)) {
+      return option === MENU_EXIT ? MENU_EXIT : null;
+    }
+
+    const selectedLink = links.find((link) => link.key === option);
+
+    if (!selectedLink) {
+      continue;
+    }
+
+    const result = await runAction(`Links - ${selectedLink.label}`, async () => {
+      console.log(`Abrindo ${selectedLink.label}: ${selectedLink.url}`);
+      await openExternalUrl(selectedLink.url);
+    });
+
+    if (isMenuExit(result)) {
+      return MENU_EXIT;
+    }
+  }
+}
+
+function menuChoice(label, value, icon = null) {
+  return {
+    label,
+    value,
+    icon
+  };
+}
+
+function backChoice() {
+  return menuChoice("Voltar", "back", ICONS.back);
+}
+
+function isCloseSubmenuOption(option) {
+  return isMenuExit(option) || isMenuBack(option) || option === "back";
+}
+
+async function promptMenu(title, message, choices, options = {}) {
+  return await promptUiMenu({
+    title,
+    message,
+    choices,
+    allowBack: options.allowBack ?? !options.main,
+    renderHeader: options.main ? () => printBanner() : null
+  });
+}
+
+function isPromptExitError(error) {
+  return ["ExitPromptError", "CancelPromptError", "AbortPromptError"].includes(error?.name);
 }
 
 async function runAction(title, action) {
   showScreenTitle(title);
-  await action();
-  await pause();
+
+  try {
+    const result = await action();
+
+    if (isMenuExit(result)) {
+      return MENU_EXIT;
+    }
+  } catch (error) {
+    if (isPromptExitError(error)) {
+      return MENU_EXIT;
+    }
+
+    throw error;
+  }
+
+  return await pause();
 }
 
 async function runRepoSelectionAction(title, action) {
-  showScreenTitle(title);
-  const repoName = await selectRepoName();
+  const repoName = await selectRepoName(title);
 
-  if (repoName) {
-    showScreenTitle(`${title}: ${repoName}`);
-    await action(repoName);
+  if (isMenuExit(repoName)) {
+    return MENU_EXIT;
   }
 
-  await pause();
+  if (isMenuBack(repoName) || !repoName) {
+    return null;
+  }
+
+  showScreenTitle(`${title}: ${repoName}`);
+
+  try {
+    await action(repoName);
+  } catch (error) {
+    if (isPromptExitError(error)) {
+      return MENU_EXIT;
+    }
+
+    throw error;
+  }
+
+  return await pause();
 }
 
 async function runOpenRepoAction() {
-  showScreenTitle("Repositorios - abrir");
-  const repoName = await selectRepoName();
+  const repoName = await selectRepoName("Repositorios - abrir");
 
-  if (repoName) {
-    const editor = await select({
-      message: "Como deseja abrir?",
-      choices: [
-        { name: "Editor padrao do repositorio", value: null },
-        { name: "VS Code", value: "vscode" },
-        { name: "IntelliJ IDEA", value: "intellij" },
-        { name: "Explorer", value: "explorer" },
-        { name: "Terminal", value: "terminal" }
-      ]
-    });
-
-    showScreenTitle(`Repositorios - abrir: ${repoName}`);
-    openRepoByName(repoName, editor);
+  if (isMenuExit(repoName)) {
+    return MENU_EXIT;
   }
 
-  await pause();
+  if (isMenuBack(repoName) || !repoName) {
+    return null;
+  }
+
+  const editor = await promptMenu("Repositorios - abrir", "Como deseja abrir?", [
+    menuChoice("Editor padrao do repositorio", null),
+    menuChoice("VS Code", "vscode"),
+    menuChoice("IntelliJ IDEA", "intellij"),
+    menuChoice("Explorer", "explorer"),
+    menuChoice("Terminal", "terminal"),
+    backChoice()
+  ]);
+
+  if (isMenuExit(editor)) {
+    return MENU_EXIT;
+  }
+
+  if (isMenuBack(editor) || editor === "back") {
+    return null;
+  }
+
+  showScreenTitle(`Repositorios - abrir: ${repoName}`);
+  openRepoByName(repoName, editor);
+
+  return await pause();
 }
 
 async function readConfigSourceFromMenu() {
   const savedSource = getSavedConfigSource();
-  const source = await input({
+  const source = await promptInput({
     message: "Repo privado ou pasta local:",
-    default: savedSource?.source || ""
+    defaultValue: savedSource?.source || ""
   });
+
+  if (isMenuExit(source)) {
+    return MENU_EXIT;
+  }
 
   return source.trim() || null;
 }
 
 async function runConfigImportFromMenu() {
+  const source = await readConfigSourceFromMenu();
+
+  if (isMenuExit(source)) {
+    return MENU_EXIT;
+  }
+
   try {
-    await runConfigImport(await readConfigSourceFromMenu());
+    await runConfigImport(source);
   } catch (error) {
     console.log(error?.message || error);
   }
+
+  return null;
 }
 
 async function runConfigPushFromMenu() {
+  const source = await readConfigSourceFromMenu();
+
+  if (isMenuExit(source)) {
+    return MENU_EXIT;
+  }
+
   try {
-    await runConfigPush(await readConfigSourceFromMenu());
+    await runConfigPush(source);
   } catch (error) {
     console.log(error?.message || error);
   }
+
+  return null;
 }
 
-async function selectRepoName() {
+async function selectRepoName(title = "Repositorios") {
   const repos = readRepos();
 
   if (repos.length === 0) {
+    showScreenTitle(title);
     console.log("Nenhum repositorio cadastrado.");
-    return null;
+    const pauseResult = await pause();
+    return isMenuExit(pauseResult) ? MENU_EXIT : null;
   }
 
-  return await select({
-    message: "Escolha um repositorio:",
-    choices: repos.map((repo) => ({
-      name: `${repo.name} - ${repo.description || "Sem descricao"}`,
-      value: repo.name
-    }))
-  });
+  return await promptMenu(title, "Escolha um repositorio:", repos.map((repo) => ({
+    name: `${repo.name} - ${repo.description || "Sem descricao"}`,
+    value: repo.name
+  })));
 }
 
 async function pause() {
-  await input({
+  const result = await promptInput({
     message: "Pressione Enter para continuar..."
   });
+
   clearScreen();
+  return isMenuExit(result) ? MENU_EXIT : null;
 }

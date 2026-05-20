@@ -49,7 +49,14 @@ const WILDCARD_SETTINGS = {
     vscode: "code",
     intellij: "idea"
   },
-  safeClean: true
+  safeClean: true,
+  ui: {
+    links: {
+      github: "https://github.com/GUILHERME-GARCIATECH",
+      linkedin: "",
+      project: "https://github.com/GUILHERME-GARCIATECH/gg-cli#readme"
+    }
+  }
 };
 
 function stableStringify(value) {

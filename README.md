@@ -229,7 +229,14 @@ Configuracoes gerais:
     "vscode": "code",
     "intellij": "idea"
   },
-  "safeClean": true
+  "safeClean": true,
+  "ui": {
+    "links": {
+      "github": "https://github.com/GUILHERME-GARCIATECH",
+      "linkedin": "",
+      "project": "https://github.com/GUILHERME-GARCIATECH/gg-cli#readme"
+    }
+  }
 }
 ```
 
@@ -243,6 +250,9 @@ Campos usados:
 | `editors.vscode` | Comando ou caminho do VS Code. |
 | `editors.intellij` | Comando ou caminho do IntelliJ IDEA. |
 | `safeClean` | Mantem limpeza conservadora, com confirmacao explicita. |
+| `ui.links.github` | Link do GitHub pessoal mostrado no cabecalho e no menu Links. |
+| `ui.links.linkedin` | Link do LinkedIn. Se ficar vazio, nao aparece. |
+| `ui.links.project` | Link do README ou repositorio do projeto. |
 
 ---
 
@@ -261,11 +271,33 @@ gg menu
 gg m
 ```
 
-O menu e auto-limpante:
+O menu e auto-limpante e usa uma camada visual propria:
 
-- antes de mostrar um menu, a tela e limpa;
-- antes de executar uma acao, a tela e limpa e mostra apenas aquela acao;
+- a tela inicial mostra um `GG` grande feito com `figlet`, em azul, com subtitulo `Personal Developer CLI`;
+- o banner usa `boxen` para borda alinhada e centralizada;
+- o menu usa `@inquirer/prompts`, com item selecionado em azul/ciano;
+- a CLI limpa a tela apenas na troca de telas, evitando redesenho completo a cada seta do menu;
 - depois de `Pressione Enter para continuar...`, a tela e limpa e volta ao menu anterior.
+- `Esc` encerra a CLI de forma segura;
+- `Backspace` em submenus volta ao menu anterior;
+- emojis aparecem no Windows Terminal/PowerShell quando o terminal parece suportar bem;
+- no CMD, a CLI usa fallback sem emoji, sem hyperlink clicavel e com borda ASCII.
+
+O cabecalho mostra links para GitHub, LinkedIn e Projeto. Em terminais que suportam hyperlinks OSC 8, os labels podem ser clicaveis; nos demais, use a opcao `Links` do menu principal para abrir no navegador.
+
+Para trocar os links, edite `config/settings.json` ou, em desenvolvimento privado, `config/settings.local.json`:
+
+```json
+{
+  "ui": {
+    "links": {
+      "github": "https://github.com/SEU-USUARIO",
+      "linkedin": "https://www.linkedin.com/in/SEU-USUARIO",
+      "project": "https://github.com/SEU-USUARIO/gg-cli#readme"
+    }
+  }
+}
+```
 
 Para depurar sem limpar a tela:
 
@@ -273,6 +305,28 @@ Para depurar sem limpar a tela:
 $env:GG_NO_CLEAR="1"
 gg
 ```
+
+Para forcar fallback sem emojis:
+
+```bash
+$env:GG_NO_EMOJI="1"
+gg
+```
+
+Para simular o fallback visual do CMD durante desenvolvimento:
+
+```bash
+$env:GG_FORCE_CMD_FALLBACK="1"
+gg
+```
+
+Dependencias de UI usadas:
+
+- `figlet` para o logo `GG`;
+- `gradient-string` e `chalk` para cores;
+- `boxen` para bordas;
+- `string-width` e `wrap-ansi` para largura/alinhamento;
+- `open` para abrir links no navegador.
 
 ---
 
@@ -402,7 +456,12 @@ Use isso apenas se voce confiar naquela pasta.
 | Arquivo | Funcoes / responsabilidade |
 |---|---|
 | `src/index.js` | Registra comandos, aliases e abre o menu quando `gg` roda sem argumentos. |
-| `src/menu.js` | Menu interativo auto-limpante. |
+| `src/menu.js` | Fluxo do menu interativo, submenus e acoes. |
+| `src/ui/banner.js` | Banner `GG` com `figlet`, `boxen`, subtitulo e cabecalho com links. |
+| `src/ui/menu.js` | Wrapper do Inquirer com `Esc`, `Backspace`, tema e fallback de emojis. |
+| `src/ui/theme.js` | Cores, gradiente, borda e tema dos prompts. |
+| `src/ui/links.js` | Links configuraveis, hyperlinks de terminal e abertura via `open`. |
+| `src/ui/terminal.js` | Deteccao de CMD, terminal moderno, hyperlink, emoji e largura. |
 | `src/utils/aliases.js` | Traduz aliases compactos como `-ro` antes do Commander. |
 | `src/utils/terminal.js` | Limpeza de tela e titulo da tela atual. |
 | `src/utils/config.js` | Resolve a raiz do projeto e o data root, le e escreve JSON de configuracao. |
@@ -435,7 +494,8 @@ Os testes cobrem:
 - shell helpers sem lancar excecao em falhas esperadas;
 - aliases compactos e aliases do Commander;
 - import/push de configuracoes pessoais com backup;
-- comandos de help sem efeitos destrutivos.
+- comandos de help sem efeitos destrutivos;
+- renderizacao da UI do menu, links, bordas, banner e fallback de emojis.
 
 ---
 
